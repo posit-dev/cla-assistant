@@ -48,17 +48,16 @@ jobs:
           # This token is required only if you have configured to store the signatures in a remote repository/organization
           PERSONAL_ACCESS_TOKEN: ${{ secrets.CLA_ASSISTANT_PAT }}
         with:
-          path-to-document: "https://gist.github.com/jcheng5/f97a51e9724099d7149015eae747de99" # CLA document
           # Specify that our signatures are kept in posit-dev/cla-assistant-signatures@main
           remote-organization-name: posit-dev
           remote-repository-name: cla-assistant-signatures
           branch: "main"
           path-to-signatures: "signatures/version1/cla.json"
           custom-notsigned-prcomment: >
-            Thank you for this PR! We ask that you sign our 
-            [Contributor License Agreement](${input.getPathToDocument()}) before 
-            we accept your contribution. You can sign the CLA by posting a 
-            comment on this PR saying:
+            Thank $you for this PR! We ask that you sign our 
+            [Contributor License Agreement](https://gist.github.com/jcheng5/f97a51e9724099d7149015eae747de99) 
+            before we accept your contribution. You can sign the CLA by posting 
+            a comment on this PR saying:
 
           # allowlist: user1,bot*
           # the followings are the optional inputs - If the optional inputs are not given, then default values will be taken
