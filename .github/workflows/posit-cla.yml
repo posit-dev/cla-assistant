@@ -55,7 +55,7 @@ jobs:
           path-to-signatures: "signatures/version1/cla.json"
           custom-notsigned-prcomment: >
             Thank $you for this PR! We ask that you sign our 
-            [Contributor License Agreement](https://gist.github.com/jcheng5/f97a51e9724099d7149015eae747de99) 
+            [Contributor License Agreement](https://posit.co/individual-contributor-agreement/) 
             before we accept your contribution. You can sign the CLA by posting 
             a comment on this PR saying:
 
