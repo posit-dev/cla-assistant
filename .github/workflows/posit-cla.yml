@@ -59,7 +59,12 @@ jobs:
             before we accept your contribution. You can sign the CLA by posting 
             a comment on this PR saying:
 
-          # allowlist: user1,bot*
+            # This allowlist is seeded with most of the members of the Positron
+            # repository. In the future, we may do something smarter here, such
+            # as plumbing an allow list through as a parameter, or reading it
+            # from another source instead of hardcoding it.
+          allowlist: DavisVaughan, dfalbel, isabelizimm, jonvanausdeln, lionel-, nstrayer, petetronic, seeM, sharon-wang, softwarenerd, timtmok, wesm
+
           # the followings are the optional inputs - If the optional inputs are not given, then default values will be taken
           #remote-organization-name: enter the remote organization name where the signatures should be stored (Default is storing the signatures in the same repository)
           #remote-repository-name: enter the  remote repository name where the signatures should be stored (Default is storing the signatures in the same repository)
