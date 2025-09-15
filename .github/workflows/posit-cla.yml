@@ -15,27 +15,25 @@ jobs:
       pull-requests: write
       statuses: write
     steps:
-      # Escaping needs to be carefully handled, because github.event.comment.body can include
-      # any character including quotes and newlines. The only safe way to do this that I could
-      # think of, is heredocs with unpredictable delimiters.
-      - name: "Generate random delimiter for heredocs"
-        id: random_delimiter
-        run: |
-          echo -n "value=" >> $GITHUB_OUTPUT
-          tr -dc A-Za-z0-9 </dev/urandom | head -c 60 >> $GITHUB_OUTPUT
-          echo >> $GITHUB_OUTPUT
-      # It's extremely easy to accidentally include a trailing newline or two, which GitHub
-      # won't even show in its rendering of the comment. The result is nothing happening,
-      # despite the comment looking completely correct. So go out of our way to strip the
-      # newlines.
       - name: "Strip whitespace from comment body"
         id: strip_whitespace
+        # The comment body is passed via an environment variable (COMMENT_BODY) to avoid
+        # direct interpolation into the shell script, which could allow command injection
+        # if the input is not properly handled. Using printf with the environment variable
+        # ensures the content is treated as literal data.
+        #
+        # We require the comment body to be exactly one line containing the CLA consent sentence
+        # (or recheck) as other parts of the message might contradict it. However, it's extremely
+        # easy to accidentally include a trailing newline or two, which GitHub won't even show in
+        # its rendering of the comment. The result is nothing happening, despite the comment
+        # looking completely correct. So go out of our way to strip the newlines, and any leading
+        # or trailing whitespace.
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
         run: |
-          echo "body<<${{ steps.random_delimiter.outputs.value }}" >> $GITHUB_OUTPUT
-          cat << "${{ steps.random_delimiter.outputs.value }}" | sed '/^[[:space:]]*$/d; s/^[[:space:]]*//; s/[[:space:]]*$//' >> $GITHUB_OUTPUT
-          ${{ github.event.comment.body }}
-          ${{ steps.random_delimiter.outputs.value }}
-          echo "${{ steps.random_delimiter.outputs.value }}" >> $GITHUB_OUTPUT
+          printf 'body=%s\n' "$COMMENT_BODY" |
+            sed '/^[[:space:]]*$/d; s/^[[:space:]]*//; s/[[:space:]]*$//' |
+            head -n 1 >> $GITHUB_OUTPUT
       # - name: "Debug output"
       #   run: |
       #     echo "body:'${{ steps.strip_whitespace.outputs.body }}'"
@@ -54,9 +52,9 @@ jobs:
           branch: "main"
           path-to-signatures: "signatures/version1/cla.json"
           custom-notsigned-prcomment: >
-            Thank $you for this PR! We ask that you sign our 
-            [Contributor License Agreement](https://posit.co/individual-contributor-agreement/) 
-            before we accept your contribution. You can sign the CLA by posting 
+            Thank $you for this PR! We ask that you sign our
+            [Contributor License Agreement](https://posit.co/individual-contributor-agreement/)
+            before we accept your contribution. You can sign the CLA by posting
             a comment on this PR saying:
 
           # This allowlist is seeded with most of the members of the Positron
@@ -75,4 +73,3 @@ jobs:
           #custom-allsigned-prcomment: 'pull request comment when all contributors has signed, defaults to **CLA Assistant Lite bot** All Contributors have signed the CLA.'
           #lock-pullrequest-aftermerge: false - if you don't want this bot to automatically lock the pull request after merging (default - true)
           #use-dco-flag: true - If you are using DCO instead of CLA
-
